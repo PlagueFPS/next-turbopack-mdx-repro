@@ -1,36 +1,54 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Turbopack MDX + remark-gfm Bug Reproduction (`mdxRs`)
 
-## Getting Started
+This repo demonstrates that remark plugins (e.g. `remark-gfm`) do **not** work with Turbopack and the `mdxRs` flag enabled in Next.js.
 
-First, run the development server:
+## Steps to Reproduce
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1. **Clone and install:**
+   ```
+   git clone <this-repo>
+   cd next-turbopack-mdx-repro
+   npm install
+   ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. **Run the dev server:**
+   ```
+   npm run dev
+   ```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. **Open the app:**  
+   Visit [http://localhost:3000](http://localhost:3000).
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. **Expected:**  
+   The table in `test-content.mdx` should render as an HTML table (since `remark-gfm` is enabled).
 
-## Learn More
+5. **Actual:**  
+   The table renders as plain text, not as an HTML table.  
+   This shows that `remark-gfm` is not applied.
 
-To learn more about Next.js, take a look at the following resources:
+## Key Files
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `next.config.ts`:  
+  ```ts
+  experimental: { mdxRs: true }
+  withMDX({ options: { remarkPlugins: ["remark-gfm"] } })
+  ```
+- `test-content.mdx`:  
+  Contains a markdown table.
+- `app/page.tsx`:  
+  Dynamically imports and renders the MDX file.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Notes
 
-## Deploy on Vercel
+- Disabling `mdxRs` or using the default Webpack pipeline makes `remark-gfm` work as expected.
+- This bug only occurs with Turbopack + `mdxRs: true`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Environment
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Next.js 15.6.0-canary.31
+- `@next/mdx` 15.5.4
+- `remark-gfm` 4.0.1
+
+## Summary
+
+**remark plugins are ignored with Turbopack and `mdxRs` enabled.**
