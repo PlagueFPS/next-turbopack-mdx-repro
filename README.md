@@ -38,17 +38,8 @@ This repo demonstrates that remark plugins (e.g. `remark-gfm`) do **not** work w
 - `app/page.tsx`:  
   Dynamically imports and renders the MDX file.
 
-## Notes
-
-- Disabling `mdxRs` or using the default Webpack pipeline makes `remark-gfm` work as expected.
-- This bug only occurs with Turbopack + `mdxRs: true`.
-
 ## Environment
 
 - Next.js 15.6.0-canary.31
 - `@next/mdx` 15.5.4
 - `remark-gfm` 4.0.1
-
-## Summary
-
-**remark plugins are ignored with Turbopack and `mdxRs` enabled.**
